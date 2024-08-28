@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGPA and CGPA Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .calculator-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .calculator {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1 1 45%;
+            min-width: 300px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Rubik', sans-serif;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: white;
+            font-weight: bold;
+            font-family: 'Rubik', sans-serif;
+        }
+        .add-btn {
+            background-color: #3498db;
+        }
+        .add-btn:hover {
+            background-color: #2980b9;
+        }
+        .calculate-btn {
+            background-color: #2ecc71;
+        }
+        .calculate-btn:hover {
+            background-color: #27ae60;
+        }
+        .reset-btn {
+            background-color: #e74c3c;
+        }
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .semester {
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .semester h3 {
+            margin-top: 0;
+            color: #34495e;
+        }
+        #result {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 30px;
+            color: #2c3e50;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+            margin-top: 30px;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center; /* This centers the items vertically */
+        }
+        .subject-label {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 50px;
+            display: inline-block; /* Ensures the label takes up space */
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Rubik', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SGPA and CGPA Calculator</h1>
+        
+        <div class="calculator-container">
+            <!-- SGPA Calculator -->
+            <div class="calculator">
+                <h2>SGPA Calculator</h2>
+                <div id="sgpaInputs">
+                    <div class="input-group">
+                        <span class="subject-label">SUB 1</span>
+                        <input type="number" placeholder="Credits" class="credits">
+                        <input type="number" placeholder="Grade Points" class="grade-points">
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button onclick="addSGPAInput()" class="add-btn">Add Course</button>
+                    <button onclick="calculateSGPA()" class="calculate-btn">Calculate SGPA</button>
+                    <button onclick="resetSGPA()" class="reset-btn">Reset</button>
+                </div>
+            </div>
+
+            <!-- CGPA Calculator -->
+            <div class="calculator">
+                <h2>CGPA Calculator</h2>
+                <div id="cgpaInputs">
+                    <div class="semester">
+                        <h3>Semester 1</h3>
+                        <div class="semester-courses">
+                            <div class="input-group">
+                                <span class="subject-label">SUB 1</span>
+                                <input type="number" placeholder="Credits" class="credits">
+                                <input type="number" placeholder="Grade Points" class="grade-points">
+                            </div>
+                        </div>
+                        <button onclick="addCourseInput(this)" class="add-btn">Add Course</button>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button onclick="addSemester()" class="add-btn">Add Semester</button>
+                    <button onclick="calculateCGPA()" class="calculate-btn">Calculate CGPA</button>
+                    <button onclick="resetCGPA()" class="reset-btn">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        Coded with ❤ by Alvin (& Claude AI 🤭). All Rights Reserved
+    </footer>
+
+    <script>
+        let sgpaSubjectCount = 1;
+        let cgpaSubjectCount = 1;
+
+        function addSGPAInput() {
+            sgpaSubjectCount++;
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <span class="subject-label">SUB ${sgpaSubjectCount}</span>
+                <input type="number" placeholder="Credits" class="credits">
+                <input type="number" placeholder="Grade Points" class="grade-points">
+            `;
+            document.getElementById('sgpaInputs').appendChild(div);
+        }
+
+        function addSemester() {
+            const semesterCount = document.getElementsByClassName('semester').length + 1;
+            cgpaSubjectCount = 1;
+            const div = document.createElement('div');
+            div.className = 'semester';
+            div.innerHTML = `
+                <h3>Semester ${semesterCount}</h3>
+                <div class="semester-courses">
+                    <div class="input-group">
+                        <span class="subject-label">SUB 1</span>
+                        <input type="number" placeholder="Credits" class="credits">
+                        <input type="number" placeholder="Grade Points" class="grade-points">
+                    </div>
+                </div>
+                <button onclick="addCourseInput(this)" class="add-btn">Add Course</button>
+            `;
+            document.getElementById('cgpaInputs').appendChild(div);
+        }
+
+        function addCourseInput(button) {
+            cgpaSubjectCount++;
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <span class="subject-label">SUB ${cgpaSubjectCount}</span>
+                <input type="number" placeholder="Credits" class="credits">
+                <input type="number" placeholder="Grade Points" class="grade-points">
+            `;
+            button.previousElementSibling.appendChild(div);
+        }
+
+        function calculateSGPA() {
+            const inputs = document.getElementById('sgpaInputs').getElementsByClassName('input-group');
+            let totalCredits = 0;
+            let totalGradePoints = 0;
+
+            for (let input of inputs) {
+                const credits = parseFloat(input.getElementsByClassName('credits')[0].value);
+                const gradePoints = parseFloat(input.getElementsByClassName('grade-points')[0].value);
+                
+                if (!isNaN(credits) && !isNaN(gradePoints)) {
+                    totalCredits += credits;
+                    totalGradePoints += credits * gradePoints;
+                }
+            }
+
+            const sgpa = totalGradePoints / totalCredits;
+            document.getElementById('result').innerText = `SGPA: ${sgpa.toFixed(2)}`;
+        }
+
+        function calculateCGPA() {
+            const semesters = document.getElementsByClassName('semester');
+            let totalCredits = 0;
+            let totalGradePoints = 0;
+
+            for (let semester of semesters) {
+                const inputs = semester.getElementsByClassName('input-group');
+                for (let input of inputs) {
+                    const credits = parseFloat(input.getElementsByClassName('credits')[0].value);
+                    const gradePoints = parseFloat(input.getElementsByClassName('grade-points')[0].value);
+                    
+                    if (!isNaN(credits) && !isNaN(gradePoints)) {
+                        totalCredits += credits;
+                        totalGradePoints += credits * gradePoints;
+                    }
+                }
+            }
+
+            const cgpa = totalGradePoints / totalCredits;
+            document.getElementById('result').innerText = `CGPA: ${cgpa.toFixed(2)}`;
+        }
+
+        function resetSGPA() {
+            sgpaSubjectCount = 1;
+            const sgpaInputs = document.getElementById('sgpaInputs');
+            sgpaInputs.innerHTML = `
+                <div class="input-group">
+                    <span class="subject-label">SUB 1</span>
+                    <input type="number" placeholder="Credits" class="credits">
+                    <input type="number" placeholder="Grade Points" class="grade-points">
+                </div>
+            `;
+            document.getElementById('result').innerText = '';
+        }
+
+        function resetCGPA() {
+            cgpaSubjectCount = 1;
+            const cgpaInputs = document.getElementById('cgpaInputs');
+            cgpaInputs.innerHTML = `
+                <div class="semester">
+                    <h3>Semester 1</h3>
+                    <div class="semester-courses">
+                        <div class="input-group">
+                            <span class="subject-label">SUB 1</span>
+                            <input type="number" placeholder="Credits" class="credits">
+                            <input type="number" placeholder="Grade Points" class="grade-points">
+                        </div>
+                    </div>
+                    <button onclick="addCourseInput(this)" class="add-btn">Add Course</button>
+                </div>
+            `;
+            document.getElementById('result').innerText = '';
+        }
+    </script>
+</body>
+</html>
